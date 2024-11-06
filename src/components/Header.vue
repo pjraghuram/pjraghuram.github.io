@@ -16,10 +16,10 @@
                 <a href="#" class="logo">Raghu Ram</a>
                 <nav class="navbar">
                     <a href="#first">About Me</a>
-                    <!-- <a href="#second">Skills</a> -->
-                    <a href="#third">Projects</a>
-                    <a href="#fourth">Experience</a>
-                    <a href="#fifth">Contact</a>
+                    <!-- <a href="#skills">Skills</a> -->
+                    <a href="#projects">Projects</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#contact">Contact</a>
                 </nav>
             </header>
             <div class="abstract-shape "></div>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
             </section>
-            <!-- <section class="skills" id="second">
+            <!-- <section class="skills" id="skills">
                 <div class="abstract-shape-left"></div>
                 <div class="skills-images">
                     <i class="fab fa-python large-icon-python"></i>
@@ -45,7 +45,7 @@
                     <i class="fab fa-angular large-icon-angular"></i>
                 </div>
             </section> -->
-            <section class="projects" id="third">
+            <section class="projects" id="projects">
                 <div class="projects-content">
                     <div class="container">
                         <div class="row">
@@ -102,7 +102,7 @@
 
                 </div>
             </section>
-            <section class="exp" id="fourth">
+            <section class="exp" id="experience">
                 <div class="exp-content">
                     <div class="timeline">
                         <!-- Timeline Item 1 -->
@@ -160,7 +160,7 @@ CGPA: 8.57</pre>
                     </div>
                 </div>
             </section>
-            <section class="contact" id="fifth">
+            <section class="contact" id="contact">
                 <div class="contact-content">
 
                 </div>
