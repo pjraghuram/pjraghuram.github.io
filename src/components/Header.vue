@@ -27,9 +27,7 @@
                 <div class="aboutme-content">
                     <h1>Hi, I'm Jaya Raghu Ram Penugonda</h1>
                     <h3>Data Analyst</h3>
-                    <p>This oil is similar to the scalp's natural sebum, so it moisturizes effectively without clogging
-                        pores. A few drops massaged into the scalp after washing
-                        can help keep it hydrated.</p>
+                    <p>I have a strong interest in data analytics and possess knowledge in understanding APIs and effective data handling. I have experience working on machine learning and deep learning models, which has fueled my passion for uncovering insights from complex data. I'm eager to further expand my skills and learn more in this ever-evolving field.</p>
                     <div class="btn-box">
                         <a href="#">Download Resume</a>
                     </div>
