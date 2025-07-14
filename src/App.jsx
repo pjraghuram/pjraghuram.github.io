@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import React, { useState, useEffect } from 'react';
 import { 
   FaGithub, 
   FaLinkedin, 
@@ -15,133 +14,62 @@ import {
   FaTwitter,
   FaArrowRight,
   FaDownload,
-  FaCube
+  FaDatabase,
+  FaChartLine,
+  FaLayerGroup,
+  FaBars,
+  FaTimes
 } from 'react-icons/fa';
 
 const Portfolio = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activeSection, setActiveSection] = useState('home');
-  const canvasRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState('All Projects');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // 3D Background Animation
-  useEffect(() => {
-    if (!canvasRef.current) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ 
-      canvas: canvasRef.current, 
-      alpha: true,
-      antialias: true 
-    });
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    // Create floating particles
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 500;
-    const posArray = new Float32Array(particlesCount * 3);
-
-    for (let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 10;
+  // Projects data
+  const projects = [
+    {
+      title: 'NUBOT - AI Student Assistant',
+      description: 'Developed an intelligent chatbot using RAG architecture to provide personalized student support.',
+      tech: ['Mistral LLM', 'LangChain', 'FAISS', 'Docker', 'GCP'],
+      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
+    },
+    {
+      title: 'COVID-19 Detection System',
+      description: 'Built a CNN model using transfer learning with VGG16. Achieved 91.61% accuracy.',
+      tech: ['TensorFlow', 'VGG16', 'Streamlit', 'Python', 'OpenCV'],
+      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
+    },
+    {
+      title: 'Health Monitoring Platform',
+      description: 'Designed SQL-based data insights platform with real-time Power BI dashboards.',
+      tech: ['SQL Server', 'Power BI', 'Python', 'ETL', 'DAX'],
+      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
     }
+  ];
 
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.005,
-      color: '#00a8ff',
-      transparent: true,
-      opacity: 0.8
-    });
-
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particles);
-
-    // Create animated sphere
-    const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const sphereMaterial = new THREE.MeshBasicMaterial({ 
-      color: '#ff6b35',
-      wireframe: true,
-      transparent: true,
-      opacity: 0.3
-    });
-    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    scene.add(sphere);
-
-    // Create floating cube
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const cubeMaterial = new THREE.MeshBasicMaterial({ 
-      color: '#00a8ff',
-      wireframe: true,
-      transparent: true,
-      opacity: 0.3
-    });
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.x = 3;
-    scene.add(cube);
-
-    camera.position.z = 5;
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Rotate objects
-      sphere.rotation.x += 0.001;
-      sphere.rotation.y += 0.002;
-      cube.rotation.x += 0.002;
-      cube.rotation.y += 0.001;
-      particles.rotation.y += 0.0005;
-
-      // Mouse interaction
-      if (mousePos.x && mousePos.y) {
-        const mouseX = (mousePos.x / window.innerWidth) * 2 - 1;
-        const mouseY = -(mousePos.y / window.innerHeight) * 2 + 1;
-        
-        sphere.position.x = mouseX * 0.5;
-        sphere.position.y = mouseY * 0.5;
-      }
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      renderer.dispose();
-    };
-  }, [mousePos]);
-
-  // Mouse tracking
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  // Filter projects based on active category
+  const filteredProjects = activeCategory === 'All Projects' 
+    ? projects 
+    : projects.filter(project => project.categories.includes(activeCategory));
 
   // Scroll effects
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 50);
+      
+      // Close mobile menu on scroll
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial call
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mobileMenuOpen]);
 
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
@@ -149,23 +77,18 @@ const Portfolio = () => {
 
   return (
     <div className="bg-black text-white min-h-screen overflow-x-hidden">
-      {/* Custom Cursor */}
-      <div 
-        className="fixed w-5 h-5 border-2 border-blue-500 rounded-full pointer-events-none z-[9999] transition-all duration-100 mix-blend-difference"
-        style={{
-          left: mousePos.x - 10,
-          top: mousePos.y - 10,
-        }}
-      />
-
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      <nav className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
         scrolled ? 'bg-black/90 backdrop-blur-lg py-4 shadow-lg shadow-blue-500/20' : 'bg-transparent py-6'
       }`}>
         <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent cursor-pointer hover:scale-110 transition-transform">
-            JRP
+          <div className="flex items-center gap-4">
+            <div className="logo-text text-2xl font-bold bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent cursor-pointer hover:scale-110 transition-transform">
+              JRP
+            </div>
           </div>
+          
+          {/* Desktop Menu */}
           <div className="hidden md:flex gap-8 items-center">
             {['Home', 'About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
               <button
@@ -178,63 +101,90 @@ const Portfolio = () => {
               </button>
             ))}
           </div>
+          
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-gray-300 hover:text-blue-500 transition-colors"
+          >
+            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+          </button>
+        </div>
+        
+        {/* Mobile Menu Overlay */}
+        <div className={`md:hidden fixed inset-0 bg-black/95 backdrop-blur-lg transition-all duration-300 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`} style={{ top: scrolled ? '72px' : '88px' }}>
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-88px)] gap-8">
+            {['Home', 'About', 'Skills', 'Projects', 'Experience', 'Contact'].map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  scrollToSection(item.toLowerCase());
+                  setMobileMenuOpen(false);
+                }}
+                className="text-2xl text-gray-300 hover:text-blue-500 transition-colors duration-300"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <canvas ref={canvasRef} className="absolute inset-0 z-0" />
-        
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-8">
-          <div className="mb-6 inline-block">
-            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-orange-500 rounded-full p-1 animate-pulse">
-              <div className="w-full h-full bg-black rounded-full flex items-center justify-center">
-                <FaCube className="text-5xl text-blue-500 animate-spin" style={{animationDuration: '10s'}} />
+      <section id="home" className="min-h-screen relative overflow-hidden">
+        <div className="relative z-10 min-h-screen flex">
+          <div className="w-full md:w-1/2 flex items-center px-8 md:pl-16 lg:pl-24">
+            <div className="w-full max-w-2xl py-20 mx-auto md:mx-0 text-center md:text-left animate-fadeIn">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient pb-4">
+                Jaya Raghu Ram Penugonda
+              </h1>
+              
+              <p className="text-2xl md:text-3xl text-gray-300 mb-6 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                Data Analyst | Data Engineer | Full-Stack Developer
+              </p>
+              
+              <p className="text-lg text-gray-400 mb-10 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+                Transforming data into intelligent solutions that drive innovation
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+                <button
+                  onClick={() => scrollToSection('projects')}
+                  className="group border-2 border-blue-500 text-blue-500 px-8 py-4 rounded-full font-semibold hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  <FaBriefcase />
+                  View Projects
+                  <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
+                </button>
+                
+                <button
+                  onClick={() => scrollToSection('contact')}
+                  className="group border-2 border-orange-500 text-orange-500 px-8 py-4 rounded-full font-semibold hover:bg-orange-500 hover:text-white hover:shadow-lg hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                >
+                  <FaEnvelope />
+                  Get In Touch
+                </button>
               </div>
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-            Jaya Raghu Ram Penugonda
-          </h1>
-          
-          <p className="text-2xl md:text-3xl text-gray-300 mb-8">
-            Data Scientist | AI/ML Engineer | Full-Stack Developer
-          </p>
-          
-          <p className="text-lg text-gray-400 mb-10">
-            Transforming data into intelligent solutions that drive innovation
-          </p>
-          
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <button
-              onClick={() => scrollToSection('projects')}
-              className="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-full font-semibold hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              <FaBriefcase />
-              View Projects
-              <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
-            </button>
-            
-            <button
-              onClick={() => scrollToSection('contact')}
-              className="group border-2 border-orange-500 text-orange-500 px-8 py-4 rounded-full font-semibold hover:bg-orange-500 hover:text-white hover:shadow-lg hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              <FaEnvelope />
-              Get In Touch
-            </button>
+          {/* Right side - Reserved space for future image */}
+          <div className="hidden md:block w-1/2 h-screen">
+            {/* This space is reserved for future profile image */}
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+        {/* <div className="absolute bottom-10 left-1/2 md:left-1/4 transform -translate-x-1/2 animate-bounce z-20">
           <div className="w-6 h-10 border-2 border-blue-500 rounded-full flex justify-center">
             <div className="w-1 h-3 bg-blue-500 rounded-full mt-2" />
           </div>
-        </div>
+        </div> */}
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-8">
+      <section id="about" className="py-20 px-8 relative z-30 bg-black">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">
             About Me
@@ -243,49 +193,69 @@ const Portfolio = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 text-gray-300">
               <p className="text-lg leading-relaxed">
-                I'm a passionate Data Analytics Engineering graduate student at Northeastern University with a perfect 4.0 GPA, 
-                combining 2.5 years of professional experience with cutting-edge academic knowledge.
+                I'm a dedicated Data Analytics Engineering graduate student at Northeastern University, eager to pursue data analyst roles while expanding my expertise in AI/ML technologies.
               </p>
               <p className="text-lg leading-relaxed">
-                What drives me is the intersection of data science, artificial intelligence, and practical software engineering. 
-                I believe in creating solutions that not only leverage the latest in ML/AI technology but also deliver real 
-                business value.
+               My journey began as an analyst at Cognizant, where I developed strong SQL skills and gained hands-on experience in data analysis and business intelligence. This practical foundation drives my passion for transforming raw data into actionable insights.
               </p>
               <p className="text-lg leading-relaxed">
-                Currently focused on advancing my expertise in machine learning, natural language processing, and cloud-native 
-                data architectures. Actively seeking opportunities to contribute to innovative AI/ML projects.
+                Currently pursuing my Master's degree, I'm actively building expertise in data visualizations and artificial intelligence. I'm particularly excited about exploring new AI/ML technologies and applying them to solve real-world business challenges.
               </p>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Current & Previous Affiliations */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="group relative bg-gradient-to-br from-red-900/20 to-black/50 backdrop-blur-sm border border-red-500/30 rounded-2xl p-6 hover:border-red-500/50 hover:shadow-[0_10px_30px_rgba(239,68,68,0.3)] transform hover:-translate-y-1 transition-all duration-300">
+                  <div className="absolute top-2 right-2 text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full">
+                    Currently
+                  </div>
+                  <div className="flex flex-col items-center text-center pt-4">
+                    <img 
+                      src="/northeastern-logo.png" 
+                      alt="Northeastern" 
+                      className="w-24 h-24 object-contain bg-white rounded-xl p-2 mb-4 shadow-lg"
+                    />
+                    <p className="text-white font-semibold text-base mb-2">Northeastern University</p>
+                    <div className="mt-2">
+                      <p className="text-3xl font-bold text-red-400">3.9/4.0</p>
+                      <p className="text-sm text-gray-400">Current GPA</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="group relative bg-gradient-to-br from-blue-900/20 to-black/50 backdrop-blur-sm border border-blue-500/30 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_10px_30px_rgba(59,130,246,0.3)] transform hover:-translate-y-1 transition-all duration-300">
+                  <div className="absolute top-2 right-2 text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">
+                    Previous
+                  </div>
+                  <div className="flex flex-col items-center text-center pt-4">
+                    <img 
+                      src="/cognizant-logo.jpeg" 
+                      alt="Cognizant" 
+                      className="w-24 h-24 object-contain bg-white rounded-xl p-2 mb-4 shadow-lg"
+                    />
+                    <p className="text-white font-semibold text-base mb-2">Cognizant</p>
+                    <div className="mt-2">
+                      <p className="text-3xl font-bold text-blue-400">2.5+</p>
+                      <p className="text-sm text-gray-400">Years Experience</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
-              <button className="group bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+              {/* Download Resume Button */}
+              {/* <button className="group bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-orange-500/50 transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 w-full justify-center">
                 <FaDownload />
                 Download Resume
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { number: '3.9/4.0', label: 'GPA at Northeastern', icon: '🎓' },
-                { number: '2.5+', label: 'Years Experience', icon: '💼' },
-                { number: '10+', label: 'Technologies', icon: '🚀' },
-                { number: '5+', label: 'Major Projects', icon: '💡' }
-              ].map((stat, index) => (
-                <div
-                  key={index}
-                  className="group bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 text-center hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
-                >
-                  <div className="text-4xl mb-2 group-hover:animate-bounce">{stat.icon}</div>
-                  <div className="text-3xl font-bold text-blue-500 mb-2">{stat.number}</div>
-                  <div className="text-sm text-gray-400">{stat.label}</div>
-                </div>
-              ))}
+              </button> */}
             </div>
           </div>
         </div>
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 px-8 bg-gray-900/30">
+      <section id="skills" className="py-20 px-8 bg-gray-900/30 relative z-30">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">
             Technical Skills
@@ -296,7 +266,7 @@ const Portfolio = () => {
               {
                 category: 'Programming Languages',
                 icon: <FaCode className="text-2xl" />,
-                skills: ['Python', 'JavaScript', 'TypeScript', 'C#', 'SQL', 'HTML/CSS']
+                skills: ['Python', 'SQL', 'T-SQL', 'C', 'C#', 'HTML/CSS', 'JavaScript']
               },
               {
                 category: 'ML/AI Frameworks',
@@ -304,9 +274,9 @@ const Portfolio = () => {
                 skills: ['TensorFlow', 'Keras', 'Scikit-learn', 'HuggingFace', 'LangChain', 'LangGraph']
               },
               {
-                category: 'Data & Visualization',
+                category: 'Visualization and Tools',
                 icon: <FaChartBar className="text-2xl" />,
-                skills: ['Power BI', 'Tableau', 'Plotly', 'Excel', 'SQL Server']
+                skills: ['Power BI', 'Tableau', 'Plotly', 'Snowflake', 'Excel', 'SQL Server']
               },
               {
                 category: 'Cloud & DevOps',
@@ -340,47 +310,47 @@ const Portfolio = () => {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 px-8">
+      <section id="projects" className="py-20 px-8 relative z-30 bg-black">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 pb-2 bg-clip-text text-transparent">
             Featured Projects
           </h2>
           
+          {/* Project Category Tabs */}
+          <div className="flex justify-center mb-12">
+            <div className="relative">
+              <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-full p-1 flex gap-2">
+                {[
+                  { name: 'All Projects', icon: <FaLayerGroup className="text-sm" /> },
+                  { name: 'ML Projects', icon: <FaBrain className="text-sm" /> },
+                  { name: 'Data Analytics', icon: <FaChartLine className="text-sm" /> },
+                  { name: 'SQL Projects', icon: <FaDatabase className="text-sm" /> }
+                ].map((category) => (
+                  <button
+                    key={category.name}
+                    onClick={() => setActiveCategory(category.name)}
+                    className={`px-6 py-3 rounded-full font-medium transition-all duration-300 relative flex items-center gap-2 ${
+                      activeCategory === category.name
+                        ? 'bg-gradient-to-r from-blue-500 to-orange-500 text-white shadow-lg'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    }`}
+                  >
+                    {category.icon}
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'NUBOT - AI Student Assistant',
-                description: 'Developed an intelligent chatbot using RAG architecture to provide personalized student support.',
-                tech: ['Mistral LLM', 'LangChain', 'FAISS', 'Docker', 'GCP'],
-                gradient: 'from-blue-500 to-purple-600',
-                icon: '🤖'
-              },
-              {
-                title: 'COVID-19 Detection System',
-                description: 'Built a CNN model using transfer learning with VGG16. Achieved 91.61% accuracy.',
-                tech: ['TensorFlow', 'VGG16', 'Streamlit', 'Python', 'OpenCV'],
-                gradient: 'from-orange-500 to-red-600',
-                icon: '🏥'
-              },
-              {
-                title: 'Health Monitoring Platform',
-                description: 'Designed SQL-based data insights platform with real-time Power BI dashboards.',
-                tech: ['SQL Server', 'Power BI', 'Python', 'ETL', 'DAX'],
-                gradient: 'from-green-500 to-teal-600',
-                icon: '📊'
-              }
-            ].map((project, index) => (
+            {filteredProjects.map((project, index) => (
               <div
-                key={index}
-                className="group relative bg-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transform hover:-translate-y-3 hover:rotate-1 transition-all duration-500 cursor-pointer"
+                key={`${activeCategory}-${index}`}
+                className="group relative bg-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 hover:shadow-[0_10px_40px_rgba(128,90,150,0.4)] transform hover:-translate-y-3 hover:rotate-1 transition-all duration-500 cursor-pointer animate-fadeIn"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className={`h-48 bg-gradient-to-br ${project.gradient} opacity-20 group-hover:opacity-30 transition-opacity duration-300`} />
-                
-                <div className="absolute top-4 right-4 text-6xl opacity-20 group-hover:opacity-40 transition-opacity duration-300">
-                  {project.icon}
-                </div>
-                
-                <div className="p-6 relative">
+                <div className="p-6">
                   <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-blue-500 transition-colors duration-300">
                     {project.title}
                   </h3>
@@ -405,10 +375,6 @@ const Portfolio = () => {
                       <FaGithub />
                       <span className="text-sm">GitHub</span>
                     </a>
-                    <a className="flex items-center gap-2 text-orange-500 hover:text-orange-400 transition-colors duration-300 cursor-pointer">
-                      <FaExternalLinkAlt />
-                      <span className="text-sm">Demo</span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -418,69 +384,86 @@ const Portfolio = () => {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-20 px-8 bg-gray-900/30">
-        <div className="max-w-4xl mx-auto">
+      <section id="experience" className="py-20 px-8 bg-gray-900/30 relative z-30">
+        <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">
             Professional Experience
           </h2>
           
-          <div className="relative">
+          <div className="relative px-4">
+            {/* Timeline line */}
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-blue-500 to-orange-500" />
             
-            {[
-              {
-                date: '2022 - 2024',
-                title: 'Programmer Analyst',
-                company: 'Cognizant Technology Solutions',
-                description: [
-                  'Built predictive SQL procedures and ASP.NET REST APIs',
-                  'Migrated legacy email systems to modern .NET frameworks',
-                  'Developed full-stack MVC web applications'
-                ],
-                icon: '💼'
-              },
-              {
-                date: '2024 - Present',
-                title: 'Graduate Research Assistant',
-                company: 'Northeastern University',
-                description: [
-                  'Conducting research in AI/ML applications',
-                  'Developing innovative NLP solutions',
-                  'Publishing academic findings'
-                ],
-                icon: '🎓'
-              }
-            ].map((exp, index) => (
-              <div
-                key={index}
-                className={`relative flex items-center mb-12 ${
-                  index % 2 === 0 ? 'justify-start' : 'justify-end'
-                }`}
-              >
-                <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
-                  <div className="group bg-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/30 transform hover:-translate-y-2 transition-all duration-300">
-                    <div className="text-blue-500 text-sm font-semibold mb-2">{exp.date}</div>
-                    <h3 className="text-xl font-bold text-white mb-1">{exp.title}</h3>
-                    <p className="text-orange-500 mb-3">{exp.company}</p>
-                    <ul className="space-y-1 text-gray-400 text-sm">
-                      {exp.description.map((item, idx) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </ul>
+            {/* First Experience - Card Left, Date Right */}
+            <div className="relative flex items-center justify-between mb-12">
+              <div className="w-[45%]">
+                <div className="group bg-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_10px_40px_rgba(128,90,150,0.4)] transform hover:-translate-y-2 transition-all duration-300">
+                  <div className="flex items-start gap-4 mb-4">
+                    <img 
+                      src="/northeastern-logo.png" 
+                      alt="Northeastern University" 
+                      className="w-12 h-12 object-contain rounded-lg bg-white p-1"
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1">Graduate Teaching Assistant</h3>
+                      <p className="text-blue-400 font-semibold text-lg">Northeastern University</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-blue-500 to-orange-500 rounded-full flex items-center justify-center text-2xl shadow-lg">
-                  {exp.icon}
+                  <ul className="space-y-1 text-gray-400 text-sm ml-16">
+                    <li>Pursuing MS in Data Analytics Engineering</li>
+                    <li>Teaching Assistant - IE 6600 Computation & Visualization</li>
+                    <li>Grading assignments and projects, supported lab sessions for graduate-level coursework</li>
+                  </ul>
                 </div>
               </div>
-            ))}
+              
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-blue-500 to-orange-500 rounded-full flex items-center justify-center text-2xl shadow-lg z-10">
+                🎓
+              </div>
+              
+              <div className="w-[45%] text-left pl-8">
+                <p className="text-orange-500 font-bold text-xl">May 2025 - Present</p>
+              </div>
+            </div>
+            
+            {/* Second Experience - Date Left, Card Right */}
+            <div className="relative flex items-center justify-between mb-12">
+              <div className="w-[45%] text-right pr-8">
+                <p className="text-orange-500 font-bold text-xl">Feb 2022 - Aug 2024</p>
+              </div>
+              
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-blue-500 to-orange-500 rounded-full flex items-center justify-center text-2xl shadow-lg z-10">
+                💼
+              </div>
+              
+              <div className="w-[45%]">
+                <div className="group bg-black/50 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_10px_40px_rgba(128,90,150,0.4)] transform hover:-translate-y-2 transition-all duration-300">
+                  <div className="flex items-start gap-4 mb-4">
+                    <img 
+                      src="/cognizant-logo.jpeg" 
+                      alt="Cognizant" 
+                      className="w-12 h-12 object-contain rounded-lg bg-white p-1"
+                    />
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-1">Programmer Analyst</h3>
+                      <p className="text-blue-400 font-semibold text-lg">Cognizant Technology Solutions</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-1 text-gray-400 text-sm ml-16">
+                    <li>Developed predictive procedures for ad performance analytics, reducing turnaround time by 30%</li>
+                    <li>Automated chatbot log analysis and created monitoring dashboards for usage optimization</li>
+                    <li> Streamlined reporting workflows across SQL Server and Excel sources for time-sensitive projects</li>
+                    <li>Migrated legacy system with SQL-to-JSON</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-8">
+      <section id="contact" className="py-20 px-8 relative z-30 bg-black">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-16 bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">
             Get In Touch
@@ -556,7 +539,7 @@ const Portfolio = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t border-gray-800">
+      <footer className="py-8 border-t border-gray-800 relative z-30 bg-black">
         <div className="max-w-6xl mx-auto px-8 text-center">
           <div className="flex justify-center gap-6 mb-4">
             {[
@@ -587,8 +570,24 @@ const Portfolio = () => {
           100% { background-position: 0% 50%; }
         }
         
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
         .animate-gradient {
           animation: gradient 4s ease infinite;
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+          animation-fill-mode: both;
         }
         
         .line-clamp-2 {
