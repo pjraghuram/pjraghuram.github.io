@@ -30,22 +30,40 @@ const Portfolio = () => {
   // Projects data
   const projects = [
     {
-      title: 'NUBOT - AI Student Assistant',
+      title: 'NUBOT - Retrieval Augmented Generation Chatbot',
       description: 'Developed an intelligent chatbot using RAG architecture to provide personalized student support.',
       tech: ['Mistral LLM', 'LangChain', 'FAISS', 'Docker', 'GCP'],
-      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
+      categories: ['All Projects', 'ML Projects']
     },
     {
       title: 'COVID-19 Detection System',
       description: 'Built a CNN model using transfer learning with VGG16. Achieved 91.61% accuracy.',
-      tech: ['TensorFlow', 'VGG16', 'Streamlit', 'Python', 'OpenCV'],
-      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
+      tech: ['Python', 'TensorFlow', 'VGG16', 'OpenCV', 'Streamlit'],
+      categories: ['All Projects', 'ML Projects']
     },
     {
       title: 'Health Monitoring Platform',
       description: 'Designed SQL-based data insights platform with real-time Power BI dashboards.',
-      tech: ['SQL Server', 'Power BI', 'Python', 'ETL', 'DAX'],
-      categories: ['ML Projects', 'Data Analytics', 'SQL Projects']
+      tech: ['SQL Server', 'Power BI', 'Python'],
+      categories: ['All Projects', 'SQL Projects']
+    },
+    {
+      title: 'Credit Risk Assessment Using Ensemble Model and Neural Networks',
+      description: 'Developed a credit risk assessment model using different ML algorithms and neural networks.',
+      tech: ['Python', 'Scikit-learn', 'TensorFlow', 'Pandas', 'NumPy'],
+      categories: ['All Projects', 'ML Projects']
+    },
+    {
+      title: 'Crash Reporting Analysis',
+      description: 'Analyzed 191K+ crash reports using Python, pandas, and data visualization to identify accident patterns. Cleaned data, engineered features, and discovered that human error causes more crashes than weather conditions, with speed directly correlating to injury severity - insights valuable for traffic safety improvements.',
+      tech: ['Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+      categories: ['All Projects', 'Data Analytics']
+    },
+    {
+      title: 'Parking Violation Analysis using Plotly',
+      description: 'Analyzed 63K+ D.C. parking violations using Python and geospatial visualization.',
+      tech: ['Python', 'Pandas', 'NumPy', 'Plotly', 'Matplotlib', 'Seaborn'],
+      categories: ['All Projects', 'Data Analytics']
     }
   ];
 
