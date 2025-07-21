@@ -33,37 +33,49 @@ const Portfolio = () => {
       title: 'NUBOT - Retrieval Augmented Generation Chatbot',
       description: 'Developed an intelligent chatbot using RAG architecture to provide personalized student support.',
       tech: ['Mistral LLM', 'LangChain', 'FAISS', 'Docker', 'GCP'],
-      categories: ['All Projects', 'ML Projects']
+      categories: ['All Projects', 'ML Projects'],
+      github: 'https://github.com/pjraghuram/NUBot'
     },
     {
-      title: 'COVID-19 Detection System',
+      title: 'COVID-19 Detection System Using Neural Networks',
       description: 'Built a CNN model using transfer learning with VGG16. Achieved 91.61% accuracy.',
       tech: ['Python', 'TensorFlow', 'VGG16', 'OpenCV', 'Streamlit'],
-      categories: ['All Projects', 'ML Projects']
+      categories: ['All Projects', 'ML Projects'],
+      github: 'https://github.com/pjraghuram/COVID-19-Detection-using-Chest-X-Ray-Images'
+    },
+    {
+      title: 'Credit Risk Assessment Using Ensemble Model and Neural Networks',
+      description: 'Developed a credit risk assessment model using different ML algorithms and neural networks.',
+      tech: ['Python', 'Scikit-learn', 'TensorFlow', 'Pandas', 'NumPy'],
+      categories: ['All Projects', 'ML Projects'],
+      github: 'https://github.com/pjraghuram/Credit-Risk-Classification-using-Ensemble-Model-and-Neural-Network'
+    },
+    {
+      title: 'Crash Reporting Analysis',
+      description: 'Analyzed 191K+ crash reports using Python, pandas, and data visualization to identify accident patterns. Cleaned data, engineered features, and discovered that human error causes more crashes than weather conditions, with speed directly correlating to injury severity - insights valuable for traffic safety improvements.',
+      tech: ['PowerBI', 'Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+      categories: ['All Projects', 'Data Analytics'],
+      github: 'https://github.com/pjraghuram/Data-Analytics-Projects'
+    },
+    {
+      title: 'Crime Data (2020-2025) Analysis',
+      description: 'Analyzed crime report data to identify high-risk years and regions using Power BI, enabling data-driven insights into crime trends.',
+      tech: ['PowerBI', 'Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
+      categories: ['All Projects', 'Data Analytics'],
+      github: 'https://github.com/pjraghuram/Data-Analytics-Projects'
+    },
+    {
+      title: 'Parking Violation Analysis using Plotly',
+      description: 'Analyzed 63K+ D.C. parking violations using Python and geospatial visualization.',
+      tech: ['Python', 'Pandas', 'NumPy', 'Plotly', 'Matplotlib', 'Seaborn'],
+      categories: ['All Projects', 'Data Analytics'],
+      github: 'https://github.com/pjraghuram/Data-Analytics-Projects'
     },
     {
       title: 'Health Monitoring Platform',
       description: 'Designed SQL-based data insights platform with real-time Power BI dashboards.',
       tech: ['SQL Server', 'Power BI', 'Python'],
       categories: ['All Projects', 'SQL Projects']
-    },
-    {
-      title: 'Credit Risk Assessment Using Ensemble Model and Neural Networks',
-      description: 'Developed a credit risk assessment model using different ML algorithms and neural networks.',
-      tech: ['Python', 'Scikit-learn', 'TensorFlow', 'Pandas', 'NumPy'],
-      categories: ['All Projects', 'ML Projects']
-    },
-    {
-      title: 'Crash Reporting Analysis',
-      description: 'Analyzed 191K+ crash reports using Python, pandas, and data visualization to identify accident patterns. Cleaned data, engineered features, and discovered that human error causes more crashes than weather conditions, with speed directly correlating to injury severity - insights valuable for traffic safety improvements.',
-      tech: ['Python', 'Pandas', 'NumPy', 'Matplotlib', 'Seaborn'],
-      categories: ['All Projects', 'Data Analytics']
-    },
-    {
-      title: 'Parking Violation Analysis using Plotly',
-      description: 'Analyzed 63K+ D.C. parking violations using Python and geospatial visualization.',
-      tech: ['Python', 'Pandas', 'NumPy', 'Plotly', 'Matplotlib', 'Seaborn'],
-      categories: ['All Projects', 'Data Analytics']
     }
   ];
 
@@ -389,10 +401,17 @@ const Portfolio = () => {
                   </div>
                   
                   <div className="flex gap-4">
-                    <a className="flex items-center gap-2 text-orange-500 hover:text-orange-400 transition-colors duration-300 cursor-pointer">
-                      <FaGithub />
-                      <span className="text-sm">GitHub</span>
-                    </a>
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-orange-500 hover:text-orange-400 transition-colors duration-300 cursor-pointer"
+                      >
+                        <FaGithub />
+                        <span className="text-sm">GitHub</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
